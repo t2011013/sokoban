@@ -9,7 +9,7 @@ var ACTION_DOWN  = 4;
  * リソースの読み込み
  */
 tm.preload(function() {
-    tm.graphics.TextureManager.add("IMG_PLAYER", "./img/dekakabocha.png");
+    tm.graphics.TextureManager.add("IMG_PLAYER", "./img/myplayer.png");
 });
 
 
@@ -36,22 +36,25 @@ tm.define("Player", {
     
     //コンストラクタ
     //引数は初期位置（マスのX座標・Y座標）
-    init: function(_owner, _x, _y) {
+    init: function(owner, x, y) {
         
         //引数のチェック
-    	this.currentX = _x = _x || 1;
-    	this.currentY = _y = _y || 1;
+        this.currentX = x = x || 1;
+        this.currentY = y = y || 1;
 
-    	this.owner = _owner;
-    	        
+        this.owner = owner;
+        
         //プレイヤーピースオブジェクトを格納する変数
-        with (_owner.matrix) {
-        	this.playerPiece = PlayerPiece(0,
-            	                   PIECE_WIDTH,
-            	                   PIECE_HEIGHT,
-            	                   baseX,   
-            	                   baseY
-            		           );
+        with (owner.matrix) {
+            var wkPx = coordinate(x, y);
+        
+            this.playerPiece = PlayerPiece(
+                                   0
+                               ,   PIECE_WIDTH
+                               ,   PIECE_HEIGHT
+                               ,   wkPx.pxX   
+                               ,   wkPx.pxY
+                               );
         }
         
         this.speed = 0;
@@ -61,104 +64,111 @@ tm.define("Player", {
     },
     
     addPlayer : function(sceneObj) {
-    	
-    	sceneObj.addChild(this.playerPiece);
-    },
-    
-    isOverlappingAtBox : function(x, y) {
-    	
-    	return (this.owner.box.currentX === x && 
-    	        this.owner.box.currentY === y);
+        
+        sceneObj.addChild(this.playerPiece);
     },
     
     update: function(key){
     
-    	var angle = key.getKeyAngle(); // キーの方向を角度で取得
-    	var destX = this.currentX;
-    	var destY = this.currentY;
-    	var wkAction = ACTION_NONE;
-    	
-        if(angle != null && this.action === ACTION_NONE){ //TODO マジックナンバー
-            this.velocity.setDegree(angle, 1);    // this.velocity.x と this.velocity.y に度をセット。 
- 			this.velocity.y *= -1;
- 			
-
- 			switch(angle){
+        var angle = key.getKeyAngle(); // キーの方向を角度で取得
+        var destX = this.currentX;
+        var destY = this.currentY;
+        var wkAction = ACTION_NONE;
+        
+        if(angle != null && this.action === ACTION_NONE){
+            this.velocity.setDegree(angle, 1);    // 度をセット。 
+             this.velocity.y *= -1;
+             
+             switch(angle){
                 case 0:
-                    this.playerPiece.moveRight();
+                    this.playerPiece.imageRight();
                     destX++;
                     wkAction = ACTION_RIGHT;
                     break;
                 case 90:
- 					this.playerPiece.moveUp();
- 					destY--;
+                     this.playerPiece.imageUp();
+                     destY--;
                     wkAction = ACTION_UP;
                     break;
                 case 180:
-                    this.playerPiece.moveLeft();
-					destX--;
+                    this.playerPiece.imageLeft();
+                    destX--;
                     wkAction = ACTION_LEFT;
                     break;
                 case 270:
-                    this.playerPiece.moveDown();
-					destY++;
+                    this.playerPiece.imageDown();
+                    destY++;
                     wkAction = ACTION_DOWN;
                     break;
                 default :
                     break;
             }
-            
+
             if (this.canMove(destX, destY, angle)) {
-            	
-            	var coordinate = this.owner.matrix.coordinate(destX, destY);
-            	console.log(coordinate.pxX + "  " + coordinate.pxY);
-            	
-            	this.destPxX = coordinate.pxX;
-            	this.destPxY = coordinate.pxY;
-            	this.action = wkAction;
-            	
-            	if (this.isOverlappingAtBox(destX, destY)) {
-            		this.owner.box.move(angle);
-            	}
+                
+                var coordinate = this.owner.matrix.coordinate(destX, destY);
+                
+                this.destPxX = coordinate.pxX;
+                this.destPxY = coordinate.pxY;
+                this.action = wkAction;
+                
+                //console.log("kokomade kita");
+                
+                var wkBox = this.getBox(destX, destY);
+                if (wkBox) {
+                    wkBox.move(angle);
+                }
             }
         }
- 		
- 		
- 		switch(this.action) {
- 			case ACTION_RIGHT:
- 				this.playerPiece.x += PLAYER_SPEED;
- 				if (this.playerPiece.x >= this.destPxX) { this.action = ACTION_NONE; this.currentX++; }
- 				break;
- 			case ACTION_UP:
- 				this.playerPiece.y -= PLAYER_SPEED;
- 				if (this.playerPiece.y <= this.destPxY) { this.action = ACTION_NONE; this.currentY--; }
- 				break;
-			case ACTION_LEFT:
-				this.playerPiece.x -= PLAYER_SPEED;
-				if (this.playerPiece.x <= this.destPxX) { this.action = ACTION_NONE; this.currentX--; }
- 				break;
- 			case ACTION_DOWN:
- 				this.playerPiece.y += PLAYER_SPEED;
- 				if (this.playerPiece.y >= this.destPxY) { this.action = ACTION_NONE; this.currentY++; }
- 				break;
- 			default:
- 				break;
- 		}
+         
+         
+         switch(this.action) {
+             case ACTION_RIGHT:
+                 this.playerPiece.x += PLAYER_SPEED;
+                 if (this.playerPiece.x >= this.destPxX) { this.action = ACTION_NONE; this.currentX++; }
+                 break;
+             case ACTION_UP:
+                 this.playerPiece.y -= PLAYER_SPEED;
+                 if (this.playerPiece.y <= this.destPxY) { this.action = ACTION_NONE; this.currentY--; }
+                 break;
+            case ACTION_LEFT:
+                this.playerPiece.x -= PLAYER_SPEED;
+                if (this.playerPiece.x <= this.destPxX) { this.action = ACTION_NONE; this.currentX--; }
+                 break;
+             case ACTION_DOWN:
+                 this.playerPiece.y += PLAYER_SPEED;
+                 if (this.playerPiece.y >= this.destPxY) { this.action = ACTION_NONE; this.currentY++; }
+                 break;
+             default:
+                 break;
+         }
+    },
+
+    isOverlappingAtBox : function(x, y) {
+
+        return (this.owner.box.currentX === x && 
+                this.owner.box.currentY === y);
     },
     
+    getBox : function(x, y) {
+
+        return this.owner.getBox(x, y);
+    },
+
     canMove : function(destX, destY, angle) {
-    	
-    	if (this.owner.backGnd.getBgPiece(destX, destY).type === 1) {
-    		return false;
-    	}
-    	
-    	if (this.isOverlappingAtBox(destX, destY) &&
-    	    !this.owner.box.canMove(angle)) {
-    		
-    		return false;
-    	}
-    	
-    	return true;
+
+        if (this.owner.backGnd.isWall(destX, destY)) {
+            return false;
+        }
+
+        var wkBox = this.getBox(destX, destY);        
+        if (wkBox &&
+            !wkBox.canMove(angle)) {
+            
+            return false;
+        }
+        
+        return true;
     }
     
 });
@@ -177,40 +187,41 @@ tm.define("PlayerPiece", {
     frame : 0,
     
     //コンストラクタ   
-    init: function(_frame, _width, _height, _x, _y) {
+    init: function(frame, width, height, pxX, pxY) {
 
-    	//プレイヤーのフレームを設定
-    	this.frame = _frame = _frame || 0;
-    	    
-    	//スプライトシートの設定
+        //プレイヤーのフレームを設定
+        this.frame = frame = frame || 0;
+            
+        //スプライトシートの設定
         this.ss = tm.app.SpriteSheet({
             image : "IMG_PLAYER",
             
             //フレームのサイズ設定
             frame: {
-                width : _width,
-                height : _height
+                width : width,
+                height : height
             }
         });
-        this.superInit(_width,_height, this.ss);//スプライトのサイズを設定
-        this.setPosition(_x, _y);//スプライトの座標を設定    
-        this.currentFrame = _frame;	
+
+        this.superInit(width,height, this.ss);//スプライトのサイズを設定
+        this.setPosition(pxX, pxY);//スプライトの座標を設定    
+        this.currentFrame = frame;    
     },
     
-    moveRight : function() {
-    	this.currentFrame = 6; //TODO マジックナンバー
+    imageRight : function() {
+        this.currentFrame = 1; //TODO マジックナンバー
     },
     
-    moveUp : function() {
-    	this.currentFrame = 9; //TODO マジックナンバー
+    imageUp : function() {
+        this.currentFrame = 3; //TODO マジックナンバー
     },
     
-    moveLeft : function() {
-    	this.currentFrame = 3; //TODO マジックナンバー
+    imageLeft : function() {
+        this.currentFrame = 2; //TODO マジックナンバー
     },
     
-    moveDown : function() {
-    	this.currentFrame = 0; //TODO マジックナンバー
+    imageDown : function() {
+        this.currentFrame = 0; //TODO マジックナンバー
     },
     
 });

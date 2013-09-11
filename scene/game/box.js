@@ -1,9 +1,15 @@
 
+var ACTION_NONE  = 0;
+var ACTION_RIGHT = 1;
+var ACTION_UP    = 2;
+var ACTION_LEFT  = 3;
+var ACTION_DOWN  = 4;
+
 /**
  * リソースの読み込み
  */
 tm.preload(function() {
-    tm.graphics.TextureManager.add("IMG_box", "./img/dekakabocha.png");
+    tm.graphics.TextureManager.add("IMG_BOX", "./img/mysheet.png");
 });
 
 
@@ -21,145 +27,155 @@ tm.define("Box", {
     destX : 0,
     destY : 0,
     
-    action : 0,
+    action : ACTION_NONE,
     
-    currentX : 3,
-    currentY : 3,
+    currentX : 1,
+    currentY : 1,
     
     owner : null,
-    matrix : null,
+    
+    checkPoint : false,
     
     //コンストラクタ
-    //引数ははこチップの横数、縦数、左上X座標・Y座標  
-    init: function(_owner, _col, _row) {
+    //引数は初期位置（マスのX座標・Y座標）
+    init: function(owner, x, y) {
         
         //引数のチェック
-    	this.col = _col = _col || 0;
-    	this.row = _row = _row || 0;
+        this.currentX = x = x || 1;
+        this.currentY = y = y || 1;
 
-    	this.owner = _owner;
-    	this.matrix = _owner.matrix;
-    	        
+        this.owner = owner;
+                
         //はこピースオブジェクトを格納する変数
-        with (_owner.matrix) {
-        	this.boxPiece = boxPiece(0,
-            	                   PIECE_WIDTH,
-            	                   PIECE_HEIGHT,
-            	                   baseX * 1 + PIECE_WIDTH * 2,   
-            	                   baseY * 1 + PIECE_HEIGHT * 2
-            		           );
+        with (owner.matrix) {
+            var wkPx = coordinate(x, y);
+        
+            this.boxPiece = BoxPiece(8,
+                                   PIECE_WIDTH,
+                                   PIECE_HEIGHT,
+                                   wkPx.pxX,   
+                                   wkPx.pxY
+                               );
         }
         
         this.speed = 0;
         this.velocity = tm.geom.Vector2(0, 0);  // ベクトルをセット
-        this.destX = this.boxPiece.centerX;
-        this.destY = this.boxPiece.centerY;
+        this.destPxX = this.boxPiece.x;
+        this.destPxY = this.boxPiece.y;
+        
+
     },
     
     addBox : function(sceneObj) {
-    	
-    	sceneObj.addChild(this.boxPiece);
+        
+        sceneObj.addChild(this.boxPiece);
+    },
+    
+    update: function(){
+         
+         if (this.owner.clear) {
+             return;
+         }
+         
+         this.checkPoint = false;
+         
+         if (this.owner.backGnd.isCheckPoint(this.currentX, this.currentY)
+          && this.action === ACTION_NONE) {
+             this.checkPoint = true;
+         };
+         
+         switch(this.action) {
+             case ACTION_RIGHT:
+                 this.boxPiece.x += PLAYER_SPEED;
+                 if (this.boxPiece.x >= this.destPxX) { this.action = ACTION_NONE; this.currentX++; }
+                 break;
+             case ACTION_UP:
+                 this.boxPiece.y -= PLAYER_SPEED;
+                 if (this.boxPiece.y <= this.destPxY) { this.action = ACTION_NONE; this.currentY--; }
+                 break;
+            case ACTION_LEFT:
+                this.boxPiece.x -= PLAYER_SPEED;
+                if (this.boxPiece.x <= this.destPxX) { this.action = ACTION_NONE; this.currentX--; }
+                 break;
+             case ACTION_DOWN:
+                 this.boxPiece.y += PLAYER_SPEED;
+                 if (this.boxPiece.y >= this.destPxY) { this.action = ACTION_NONE; this.currentY++; }
+                 break;
+             default:
+                 break;
+         }
+         
+    },
+    
+    move : function(angle) {
+
+        var destX = this.currentX;
+        var destY = this.currentY;
+
+        switch(angle){
+            case 0:
+                this.boxPiece.imageRight();
+                destX++;
+                wkAction = ACTION_RIGHT;
+                break;
+            case 90:
+                this.boxPiece.imageUp();
+                destY--;
+                wkAction = ACTION_UP;
+                break;
+            case 180:
+                this.boxPiece.imageLeft();
+                destX--;
+                wkAction = ACTION_LEFT;
+                break;
+            case 270:
+                this.boxPiece.imageDown();
+                destY++;
+                wkAction = ACTION_DOWN;
+                break;
+            default :
+                break;
+        }
+        
+        var coordinate = this.owner.matrix.coordinate(destX, destY);
+        
+        this.destPxX = coordinate.pxX;
+        this.destPxY = coordinate.pxY;
+        this.action = wkAction;
     },
     
     canMove : function(angle) {
-    
- 			switch(angle){
-                case 0:
-                    //console.log("右");
-                    
-                    if (this.owner.backGnd.getBgPiece((this.currentX + 1), this.currentY).type === 1) { return false; }
-                    
-                    break;
-                case 90:
-                    //console.log("上");
- 					
- 					if (this.owner.backGnd.getBgPiece((this.currentX), (this.currentY - 1)).type === 1) { return false; }
- 					
-                    break;
-                case 180:
-                    //console.log("左");
-                    this.boxPiece.moveLeft();
-                    if (this.owner.backGnd.getBgPiece((this.currentX - 1), (this.currentY)).type === 1) { return false; }
-                    
-                    break;
-                case 270:
-                    //console.log("下");
-                    this.boxPiece.moveDown();
-                    if (this.owner.backGnd.getBgPiece((this.currentX), (this.currentY + 1)).type === 1) { return false; }
-                    
-                    break;
-                default :
-                    break;
-            }
-           
-    	return true;
-    },
-    
-    
-    //TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!汚すぎる
-    move : function(angle) {
-        if(this.action === 0){ //TODO マジックナンバー
-        	
- 			//TODO汚い
- 			switch(angle){
-                case 0:
-                    //console.log("右");
-                    this.boxPiece.moveRight();
-                    if (this.owner.backGnd.getBgPiece((this.currentX + 1), this.currentY).type === 1) { break; }
-                    this.destX = this.destX + PIECE_WIDTH;
-                    this.action = 1; //TODO マジックナンバー
-                    break;
-                case 90:
-                    //console.log("上");
- 					this.boxPiece.moveUp();
- 					if (this.owner.backGnd.getBgPiece((this.currentX), (this.currentY - 1)).type === 1) { break; }
- 					this.destY = this.destY - PIECE_HEIGHT;
-                    this.action = 2; //TODO マジックナンバー
-                    break;
-                case 180:
-                    //console.log("左");
-                    this.boxPiece.moveLeft();
-                    if (this.owner.backGnd.getBgPiece((this.currentX - 1), (this.currentY)).type === 1) { break; }
-                    this.destX = this.destX - PIECE_WIDTH;
-                    this.action = 3; //TODO マジックナンバー
-                    break;
-                case 270:
-                    //console.log("下");
-                    this.boxPiece.moveDown();
-                    if (this.owner.backGnd.getBgPiece((this.currentX), (this.currentY + 1)).type === 1) { break; }
-                    this.destY = this.destY + PIECE_HEIGHT;
-                    this.action = 4; //TODO マジックナンバー
-                    break;
-                default :
-                    break;
-            }
-        }
-    },
-    update: function(){
-    
 
- 		console.log(this.action);
- 		switch(this.action) {
- 			case 1:
- 				this.boxPiece.x += 16; //TODO マジックナンバー
- 				if (this.boxPiece.centerX >= this.destX) {this.action = 0;this.currentX++;} //TODO マジックナンバーそして汚い
- 				break;
- 			case 2:
- 				this.boxPiece.y -= 16; //TODO マジックナンバー
- 				if (this.boxPiece.centerY <= this.destY) {this.action = 0;this.currentY--;} //TODO マジックナンバーそして汚い
- 				break;
-			case 3:
-				this.boxPiece.x -= 16; //TODO マジックナンバー
-				if (this.boxPiece.centerX <= this.destX) {this.action = 0;this.currentX--;} //TODO マジックナンバーそして汚い
- 				break;
- 			case 4:
- 				this.boxPiece.y += 16; //TODO マジックナンバー
- 				if (this.boxPiece.centerY >= this.destY) {this.action = 0;this.currentY++;} //TODO マジックナンバーそして汚い
- 				break;
- 			default:
- 				break;
- 		}
-    }
+        var destX = this.currentX;
+        var destY = this.currentY;
+
+        switch(angle){
+            case 0:
+                destX++;
+                break;
+            case 90:
+                destY--;
+                break;
+            case 180:
+                destX--;
+                break;
+            case 270:
+                destY++;
+                break;
+            default :
+                break;
+        }
+        
+        if (this.owner.backGnd.isWall(destX, destY)) {
+            return false;
+        }
+        
+        if (this.owner.getBox(destX, destY)) {
+            return false;
+        }
+        
+        return true;
+    },
     
 });
 
@@ -167,50 +183,50 @@ tm.define("Box", {
 /**
  * はこピースクラス
  */
-tm.define("boxPiece", {
+tm.define("BoxPiece", {
     superClass : "tm.app.AnimationSprite",
     
     //スプライトシート
     //ss : null,
     
     //はこのフレーム
-    frame : 10,
+    frame : 0,
     
     //コンストラクタ   
-    init: function(_frame, _width, _height, _x, _y) {
+    init: function(frame, width, height, x, y) {
 
-    	//はこのフレームを設定
-    	this.frame = _frame = _frame || 0;
-    	    
-    	//スプライトシートの設定
+        //はこのフレームを設定
+        this.frame = frame = frame || 0;
+            
+        //スプライトシートの設定
         this.ss = tm.app.SpriteSheet({
-            image : "IMG_box",
+            image : "IMG_BOX",
             
             //フレームのサイズ設定
             frame: {
-                width : _width,
-                height : _height
+                width : width,
+                height : height
             }
         });
-        this.superInit(_width,_height, this.ss);//スプライトのサイズを設定
-        this.setPosition(_x, _y);//スプライトの座標を設定    
-        this.currentFrame = _frame;	
+        this.superInit(width, height, this.ss);//スプライトのサイズを設定
+        this.setPosition(x, y);//スプライトの座標を設定    
+        this.currentFrame = frame;    
     },
     
-    moveRight : function() {
-    	this.currentFrame = 6; //TODO マジックナンバー
+    imageRight : function() {
+        //this.currentFrame = 0; //TODO マジックナンバー
     },
     
-    moveUp : function() {
-    	this.currentFrame = 9; //TODO マジックナンバー
+    imageUp : function() {
+        //this.currentFrame = 0; //TODO マジックナンバー
     },
     
-    moveLeft : function() {
-    	this.currentFrame = 3; //TODO マジックナンバー
+    imageLeft : function() {
+        //this.currentFrame = 0; //TODO マジックナンバー
     },
     
-    moveDown : function() {
-    	this.currentFrame = 0; //TODO マジックナンバー
+    imageDown : function() {
+        //this.currentFrame = 0; //TODO マジックナンバー
     },
     
 });
