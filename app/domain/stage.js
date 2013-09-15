@@ -1,23 +1,25 @@
 "use strict";
 var rules = exports.rules || {'FLAT': 0, 'WALL': 1, 'TARGET': 4};
+var defaults =  {'row': 9, 'col': 9, 'box': 2};
 
 exports.data = function(f, cb, options) {
-  options = options || {};
+  options = options || defaults;
   var fs = require('fs');
 
   fs.exists(f, function(exists) {
+    console.log('File accessed: ' + f);
     if (exists) {
-      fs.readFile(f, function(err, data) {
-        cb(err, data);
+      fs.readFile(f, { encoding: 'utf8'}, function(err, data) {
+        cb(err, eval(data));
       });
     } else {
-      cb(false, random(options));
+      cb(false, [random(options)]);
     }
   });
 };
 
 function random(options) {
-  options = options || {'row': 9, 'col': 9, 'box': 2};
+  options = options || defaults;
 
   /** const */
   var PLAYER = 1;
