@@ -1,0 +1,40 @@
+{
+  "name": "sokoban",
+  "version": "0.0.1",
+  "homepage": "https://github.com/t2011013/sokoban",
+  "authors": [
+    "t2011013",
+    "filti"
+  ],
+  "description": "sokoban game",
+  "main": "app.js",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "backbone": "~1.0.0",
+    "jquery": "~2.0.3",
+    "underscore": "~1.5.2",
+    "tmlib.js": "~0.1.8"
+  },
+  "exportsOverride": {
+    "backbone": {
+      "js": "backbone*.js"
+    },
+    "jquery": {
+      "js": "jquery*js"
+    },
+    "underscore": {
+      "js": "underscore*.js"
+    },
+    "tmlib.js": {
+      "js": "build/*js"
+    }
+  }
+}
