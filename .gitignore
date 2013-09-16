@@ -219,3 +219,6 @@ node_modules/
 
 # bower
 bower_components/
+
+# sokoban libs
+public/lib/
