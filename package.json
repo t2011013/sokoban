@@ -10,5 +10,13 @@
     "jade": "*",
     "stylus": "*",
     "node-static": "*"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-bower-task": "~0.3.2",
+    "expect": "0.0.2",
+    "mocha": "~1.13.0",
+    "grunt-contrib-jshint": "~0.6.4",
+    "grunt-mocha-test": "~0.6.3"
   }
 }
