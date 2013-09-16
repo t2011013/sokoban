@@ -1,0 +1,17 @@
+{
+  "strict": true,
+  "indent": 2,
+  "maxlen": 80,
+  "unused": true,
+
+  "undef": true,
+  "browser": true,
+  "devel": true,
+  "jquery": true,
+  "node": true,
+  "phantom": true,
+  "globals": {
+    "_": false,
+    "Backbone": false
+  }
+}

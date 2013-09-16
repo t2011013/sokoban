@@ -213,3 +213,12 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+
+# node
+node_modules/
+
+# bower
+bower_components/
+
+# sokoban libs
+public/lib/
