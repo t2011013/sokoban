@@ -29,8 +29,8 @@ tm.define("game.BackGround", {
       var wkPx = owner.matrix.coordinate((i % owner.matrix.col) + 1, Math.floor(i / owner.matrix.col) + 1);
 
       this.bg[i] = game.BgPiece(_bgData[i],
-                          PIECE_WIDTH,
-                          PIECE_HEIGHT,
+                          game.PIECE_WIDTH,
+                          game.PIECE_HEIGHT,
                           wkPx.pxX,
                           wkPx.pxY
                           );

@@ -38,8 +38,8 @@ tm.define("game.Matrix", {
   coordinate : function(_x, _y) {
 
     return ({ 
-      pxX : (_x * 1 - 1) * PIECE_WIDTH + this.baseX,
-      pxY : (_y * 1 - 1) * PIECE_HEIGHT + this.baseY 
+      pxX : (_x * 1 - 1) * game.PIECE_WIDTH + this.baseX,
+      pxY : (_y * 1 - 1) * game.PIECE_HEIGHT + this.baseY 
     });
   },
 });

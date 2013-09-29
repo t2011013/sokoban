@@ -1,9 +1,9 @@
 
-var ACTION_NONE = 0;
-var ACTION_RIGHT = 1;
-var ACTION_UP = 2;
-var ACTION_LEFT = 3;
-var ACTION_DOWN = 4;
+game.ACTION_NONE = game.ACTION_NONE || 0;
+game.ACTION_RIGHT = game.ACTION_RIGHT || 1;
+game.ACTION_UP = game.ACTION_UP || 2;
+game.ACTION_LEFT = game.ACTION_LEFT || 3;
+game.ACTION_DOWN = game.ACTION_DOWN || 4;
 
 /**
  * リソースの読み込み
@@ -23,7 +23,7 @@ tm.define("game.Player", {
   destX : 0,
   destY : 0,
 
-  action : ACTION_NONE,
+  action : game.ACTION_NONE,
 
   currentX : 1,
   currentY : 1,
@@ -46,8 +46,8 @@ tm.define("game.Player", {
 
     this.playerPiece = game.PlayerPiece(
                          0
-                       , PIECE_WIDTH
-                       , PIECE_HEIGHT
+                       , game.PIECE_WIDTH
+                       , game.PIECE_HEIGHT
                        , wkPx.pxX
                        , wkPx.pxY
                        );
@@ -69,9 +69,9 @@ tm.define("game.Player", {
     var angle = key.getKeyAngle(); // キーの方向を角度で取得
     var destX = this.currentX;
     var destY = this.currentY;
-    var wkAction = ACTION_NONE;
+    var wkAction = game.ACTION_NONE;
 
-    if(angle != null && this.action === ACTION_NONE){
+    if(angle != null && this.action === game.ACTION_NONE){
       this.velocity.setDegree(angle, 1);  // 度をセット。
        this.velocity.y *= -1;
 
@@ -79,22 +79,22 @@ tm.define("game.Player", {
         case 0:
           this.playerPiece.imageRight();
           destX++;
-          wkAction = ACTION_RIGHT;
+          wkAction = game.ACTION_RIGHT;
           break;
         case 90:
            this.playerPiece.imageUp();
            destY--;
-          wkAction = ACTION_UP;
+          wkAction = game.ACTION_UP;
           break;
         case 180:
           this.playerPiece.imageLeft();
           destX--;
-          wkAction = ACTION_LEFT;
+          wkAction = game.ACTION_LEFT;
           break;
         case 270:
           this.playerPiece.imageDown();
           destY++;
-          wkAction = ACTION_DOWN;
+          wkAction = game.ACTION_DOWN;
           break;
         default :
           break;
@@ -117,21 +117,21 @@ tm.define("game.Player", {
 
 
      switch(this.action) {
-       case ACTION_RIGHT:
-         this.playerPiece.x += PLAYER_SPEED;
-         if (this.playerPiece.x >= this.destPxX) { this.action = ACTION_NONE; this.currentX++; }
+       case game.ACTION_RIGHT:
+         this.playerPiece.x += game.PLAYER_SPEED;
+         if (this.playerPiece.x >= this.destPxX) { this.action = game.ACTION_NONE; this.currentX++; }
          break;
-       case ACTION_UP:
-         this.playerPiece.y -= PLAYER_SPEED;
-         if (this.playerPiece.y <= this.destPxY) { this.action = ACTION_NONE; this.currentY--; }
+       case game.ACTION_UP:
+         this.playerPiece.y -= game.PLAYER_SPEED;
+         if (this.playerPiece.y <= this.destPxY) { this.action = game.ACTION_NONE; this.currentY--; }
          break;
-      case ACTION_LEFT:
-        this.playerPiece.x -= PLAYER_SPEED;
-        if (this.playerPiece.x <= this.destPxX) { this.action = ACTION_NONE; this.currentX--; }
+      case game.ACTION_LEFT:
+        this.playerPiece.x -= game.PLAYER_SPEED;
+        if (this.playerPiece.x <= this.destPxX) { this.action = game.ACTION_NONE; this.currentX--; }
          break;
-       case ACTION_DOWN:
-         this.playerPiece.y += PLAYER_SPEED;
-         if (this.playerPiece.y >= this.destPxY) { this.action = ACTION_NONE; this.currentY++; }
+       case game.ACTION_DOWN:
+         this.playerPiece.y += game.PLAYER_SPEED;
+         if (this.playerPiece.y >= this.destPxY) { this.action = game.ACTION_NONE; this.currentY++; }
          break;
        default:
          break;

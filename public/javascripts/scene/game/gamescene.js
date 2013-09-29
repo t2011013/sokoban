@@ -1,8 +1,3 @@
-var MATRIX_X = 9;
-var MATRIX_Y = 7;
-var PIECE_WIDTH = 21;
-var PIECE_HEIGHT = 21;
-var PLAYER_SPEED = 7;
 
 tm.define("game.GameScene", {
   superClass: "tm.app.Scene",
@@ -20,7 +15,7 @@ tm.define("game.GameScene", {
     // 親の初期化
     this.superInit();
     
-    this.matrix = game.Matrix(MATRIX_X, MATRIX_Y, 0, 0);
+    this.matrix = game.Matrix(game.MATRIX_X, game.MATRIX_Y, 0, 0);
 
     this.backGnd = game.BackGround(this, stageData[0].background.data);
     this.backGnd.addBg(this);

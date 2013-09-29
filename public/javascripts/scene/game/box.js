@@ -1,9 +1,8 @@
-
-var ACTION_NONE = 0;
-var ACTION_RIGHT = 1;
-var ACTION_UP = 2;
-var ACTION_LEFT = 3;
-var ACTION_DOWN = 4;
+game.ACTION_NONE = game.ACTION_NONE || 0;
+game.ACTION_RIGHT = game.ACTION_RIGHT || 1;
+game.ACTION_UP = game.ACTION_UP || 2;
+game.ACTION_LEFT = game.ACTION_LEFT || 3;
+game.ACTION_DOWN = game.ACTION_DOWN || 4;
 
 /**
  * リソースの読み込み
@@ -23,7 +22,7 @@ tm.define("game.Box", {
   destX : 0,
   destY : 0,
 
-  action : ACTION_NONE,
+  action : game.ACTION_NONE,
 
   currentX : 1,
   currentY : 1,
@@ -46,8 +45,8 @@ tm.define("game.Box", {
     var wkPx = owner.matrix.coordinate(x, y);
 
     this.boxPiece = game.BoxPiece(8,
-                            PIECE_WIDTH,
-                            PIECE_HEIGHT,
+                            game.PIECE_WIDTH,
+                            game.PIECE_HEIGHT,
                             wkPx.pxX,
                             wkPx.pxY
                             );
@@ -71,26 +70,26 @@ tm.define("game.Box", {
      this.checkPoint = false;
 
      if (this.owner.backGnd.isCheckPoint(this.currentX, this.currentY)
-        && this.action === ACTION_NONE) {
+        && this.action === game.ACTION_NONE) {
        this.checkPoint = true;
      };
 
      switch(this.action) {
-       case ACTION_RIGHT:
-         this.boxPiece.x += PLAYER_SPEED;
-         if (this.boxPiece.x >= this.destPxX) { this.action = ACTION_NONE; this.currentX++; }
+       case game.ACTION_RIGHT:
+         this.boxPiece.x += game.PLAYER_SPEED;
+         if (this.boxPiece.x >= this.destPxX) { this.action = game.ACTION_NONE; this.currentX++; }
          break;
-       case ACTION_UP:
-         this.boxPiece.y -= PLAYER_SPEED;
-         if (this.boxPiece.y <= this.destPxY) { this.action = ACTION_NONE; this.currentY--; }
+       case game.ACTION_UP:
+         this.boxPiece.y -= game.PLAYER_SPEED;
+         if (this.boxPiece.y <= this.destPxY) { this.action = game.ACTION_NONE; this.currentY--; }
          break;
-      case ACTION_LEFT:
-        this.boxPiece.x -= PLAYER_SPEED;
-        if (this.boxPiece.x <= this.destPxX) { this.action = ACTION_NONE; this.currentX--; }
+      case game.ACTION_LEFT:
+        this.boxPiece.x -= game.PLAYER_SPEED;
+        if (this.boxPiece.x <= this.destPxX) { this.action = game.ACTION_NONE; this.currentX--; }
          break;
-       case ACTION_DOWN:
-         this.boxPiece.y += PLAYER_SPEED;
-         if (this.boxPiece.y >= this.destPxY) { this.action = ACTION_NONE; this.currentY++; }
+       case game.ACTION_DOWN:
+         this.boxPiece.y += game.PLAYER_SPEED;
+         if (this.boxPiece.y >= this.destPxY) { this.action = game.ACTION_NONE; this.currentY++; }
          break;
        default:
          break;
@@ -107,22 +106,22 @@ tm.define("game.Box", {
       case 0:
         this.boxPiece.imageRight();
         destX++;
-        wkAction = ACTION_RIGHT;
+        wkAction = game.ACTION_RIGHT;
         break;
       case 90:
         this.boxPiece.imageUp();
         destY--;
-        wkAction = ACTION_UP;
+        wkAction = game.ACTION_UP;
         break;
       case 180:
         this.boxPiece.imageLeft();
         destX--;
-        wkAction = ACTION_LEFT;
+        wkAction = game.ACTION_LEFT;
         break;
       case 270:
         this.boxPiece.imageDown();
         destY++;
-        wkAction = ACTION_DOWN;
+        wkAction = game.ACTION_DOWN;
         break;
       default :
         break;

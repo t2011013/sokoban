@@ -9,6 +9,17 @@ game.SCREEN_CENTER_X = game.SCREEN_WIDTH/2;
 game.SCREEN_CENTER_Y = game.SCREEN_HEIGHT/2;
 game.STAGE_URL = "http://localhost:3000/api/stage/";
 
+game.ACTION_NONE = 0;
+game.ACTION_RIGHT = 1;
+game.ACTION_UP = 2;
+game.ACTION_LEFT = 3;
+game.ACTION_DOWN = 4;
+
+game.MATRIX_X = 9;
+game.MATRIX_Y = 7;
+game.PIECE_WIDTH = 21;
+game.PIECE_HEIGHT = 21;
+game.PLAYER_SPEED = 7;
 
 // main.jsのASSETSに移動した 2013/9/28
 var ASSETS = {
