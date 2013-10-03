@@ -1,3 +1,4 @@
+var game = game || {};
 
 tm.define("game.GameScene", {
   superClass: "tm.app.Scene",
@@ -63,12 +64,14 @@ tm.define("game.GameScene", {
     
     if (wkClear) {
       this.clear = wkClear;
-      var diff = Math.floor(((new Date()).getTime() - this.startDate.getTime()) / 1000);
+      var diff = ((new Date()).getTime() - this.startDate.getTime()) / 1000;
       var hour = Math.floor(diff / 360);
       var min = Math.floor(Math.floor(diff % 360) / 60);
       var sec = Math.floor(diff % 60);
       //window.alert("ステージクリア～～～:" + hour + "時間" + min + "分" + sec + "秒");
-      
+
+      game.scoreArray.push(diff);
+
       game.mainCanvas.currentScene.update = null;
       var nextStage = game.NextStageScene();
       game.gameApp.replaceScene(nextStage);
