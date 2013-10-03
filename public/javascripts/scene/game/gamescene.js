@@ -3,8 +3,6 @@ var game = game || {};
 tm.define("game.GameScene", {
   superClass: "tm.app.Scene",
   
-  GAME_WIDTH : 9 * 64,
-  GAME_HEIGHT : 7 * 64,
   backGnd : null,
   player : null,
   matrix : null,
@@ -16,7 +14,10 @@ tm.define("game.GameScene", {
     // 親の初期化
     this.superInit();
     
-    this.matrix = game.Matrix(game.MATRIX_X, game.MATRIX_Y, 0, 0);
+    var row = stageData[0].background.row || game.MATRIX_X;
+    var col = stageData[0].background.col || game.MATRIX_Y;
+    
+    this.matrix = game.Matrix(row, col, 0, 0);
 
     this.backGnd = game.BackGround(this, stageData[0].background.data);
     this.backGnd.addBg(this);
