@@ -26,7 +26,7 @@ tm.define("game.GameScene", {
     var boxCod = stageData[0].box.coordinate;
     
     for (var i = 0; i < boxCod.length; i++) {
-      boxArray.push(game.Box(this, boxCod[i].row, boxCod[i].col));
+      boxArray.push(game.Box(this, boxCod[i].row + 1, boxCod[i].col + 1));
     }
     
     this.box = boxArray;
@@ -35,7 +35,7 @@ tm.define("game.GameScene", {
     }
     
     var playerCod = stageData[0].player.coordinate;
-    this.player = game.Player(this, playerCod.row, playerCod.col);
+    this.player = game.Player(this, playerCod.row + 1, playerCod.col + 1);
     
     this.player.addPlayer(this);
     this.startDate = new Date();
